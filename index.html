@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sadi Kerimi Portfolio</title>
+<meta name="description" content="Muhammed Ahmet Sadi Kerimi, AI & Data Engineering student at Istanbul Technical University: computer vision, machine learning and optimization projects.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a ruled engineering notebook. The hero is a real map of Istanbul's charging network from my own project;
+   every section below reads like a lab-book entry with a mono margin label, and metrics sit in detector-style boxes. */
+:root{
+  --paper:#f4f6f8;
+  --surface:#ffffff;
+  --ink:#14202b;
+  --muted:#5b6b78;
+  --rule:#d5dde4;
+  --accent:#1d5fd1;        /* Bosphorus blue */
+  --signal:#e4572e;        /* detection-box orange */
+  --accent-soft:#e3ecfb;
+  --display:"Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e151c; --surface:#151f29; --ink:#e6edf3; --muted:#93a4b3; --rule:#263442;
+    --accent:#6ea2ff; --signal:#ff7a52; --accent-soft:#1b2c45; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e151c; --surface:#151f29; --ink:#e6edf3; --muted:#93a4b3; --rule:#263442;
+  --accent:#6ea2ff; --signal:#ff7a52; --accent-soft:#1b2c45; color-scheme: dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6}
+a{color:var(--accent);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--signal);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+.mono{font-family:var(--mono)}
+.num{font-variant-numeric:tabular-nums}
+
+/* Hero */
+.hero{padding:56px 0 32px;border-bottom:1px solid var(--rule)}
+.hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center}
+.kicker{font-family:var(--mono);font-size:13px;letter-spacing:.04em;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
+.kicker span{border:1px solid var(--rule);padding:2px 8px;border-radius:3px;background:var(--surface)}
+h1{font-size:clamp(44px,7vw,84px);line-height:.95;font-weight:800;letter-spacing:-.02em;margin:18px 0 18px}
+h1 .last{color:var(--accent)}
+.lede{font-size:19px;max-width:34ch;color:var(--ink);margin:0 0 22px}
+.links{display:flex;flex-wrap:wrap;gap:10px}
+.btn{font-family:var(--mono);font-size:14px;text-decoration:none;padding:9px 14px;border:1.5px solid var(--ink);color:var(--ink);border-radius:4px;background:transparent;transition:background .15s,color .15s}
+.btn:hover{background:var(--ink);color:var(--paper)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(1.08);background:var(--accent);color:#fff}
+.email{font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:12px}
+
+.mapcard{position:relative;background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:14px}
+.mapcard canvas{display:block;width:100%;height:auto;aspect-ratio: 900 / 520}
+.box{position:absolute;border:2px solid var(--signal);pointer-events:none}
+.box b{position:absolute;top:-22px;left:-2px;background:var(--signal);color:#fff;font:500 11px var(--mono);padding:2px 6px;white-space:nowrap}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font:12px var(--mono);color:var(--muted);margin-top:10px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+
+/* Sections */
+section{padding:56px 0;border-bottom:1px solid var(--rule)}
+.entry{display:grid;grid-template-columns:150px 1fr;gap:32px}
+.label{font-family:var(--mono);font-size:13px;color:var(--muted);padding-top:8px;letter-spacing:.03em}
+h2{font-size:clamp(28px,4vw,40px);font-weight:600;letter-spacing:-.01em;margin-bottom:22px}
+.prose{max-width:65ch}
+.prose p{margin:0 0 14px}
+
+/* Experience */
+.job{display:grid;grid-template-columns:1fr auto;gap:4px 16px;padding:18px 0;border-top:1px dashed var(--rule)}
+.job:first-of-type{border-top:0;padding-top:0}
+.job h3{font-size:21px;font-weight:600}
+.job .when{font:13px var(--mono);color:var(--muted);white-space:nowrap;padding-top:5px}
+.job .org{color:var(--accent);font-weight:500;grid-column:1/-1}
+.job ul{grid-column:1/-1;margin:6px 0 0;padding-left:18px;max-width:65ch}
+.job li{margin:3px 0}
+
+/* Projects */
+.project{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:28px;margin-bottom:22px}
+.project.feature{border-left:4px solid var(--accent)}
+.phead{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:baseline}
+.project h3{font-size:26px;font-weight:600;line-height:1.15}
+.meta{font:13px var(--mono);color:var(--muted)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 16px}
+.tags span{font:12px var(--mono);background:var(--accent-soft);color:var(--ink);padding:3px 8px;border-radius:3px}
+.project p{max-width:65ch;margin:0 0 12px}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:18px 0}
+.metric{position:relative;border:2px solid var(--signal);padding:18px 12px 10px;border-radius:2px}
+.metric .tag{position:absolute;top:-11px;left:8px;background:var(--signal);color:#fff;font:500 11px var(--mono);padding:1px 6px}
+.metric .v{font-family:var(--display);font-size:30px;font-weight:800;line-height:1.1}
+.metric .k{font-size:13px;color:var(--muted);line-height:1.35;margin-top:2px}
+.chart{margin:8px 0 14px}
+.chart svg{width:100%;height:auto;display:block}
+.chart figcaption{font:12px var(--mono);color:var(--muted);margin:6px 0 14px}
+.status{display:inline-block;font:500 12px var(--mono);padding:2px 8px;border-radius:3px;border:1px solid var(--signal);color:var(--signal)}
+.more{font:14px var(--mono)}
+
+.minor{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.minor article{border:1px solid var(--rule);border-radius:6px;padding:18px;background:var(--surface)}
+.minor h3{font-size:18px;font-weight:600;margin-bottom:6px}
+.minor p{font-size:15px;color:var(--muted);margin:0 0 10px}
+
+/* Skills */
+.skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.skills h3{font:500 13px var(--mono);color:var(--muted);margin-bottom:8px;letter-spacing:.03em}
+.skills p{margin:0}
+
+footer{padding:40px 0 56px;font:13px var(--mono);color:var(--muted)}
+footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+@media (max-width:820px){
+  .hero-grid{grid-template-columns:1fr}
+  .entry{grid-template-columns:1fr;gap:6px}
+  .label{padding-top:0}
+}
+@media (max-width:420px){
+  .wrap{padding:0 16px}
+  .project{padding:20px}
+  .job{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion: no-preference){
+  .box{animation:scan 2.4s ease-out 1}
+  @keyframes scan{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker"><span>AI &amp; Data Engineering</span><span>Istanbul Technical University</span><span>Class of 2028</span></div>
+      <h1>Muhammed Ahmet <span class="last">Sadi Kerimi</span></h1>
+      <p class="lede">Third-year engineering student working on computer vision, machine learning and optimization. Currently an R&amp;D intern building YOLO-based detection models.</p>
+      <div class="links">
+        <a class="btn primary" href="https://github.com/sadikerimi">GitHub</a>
+        <a class="btn" href="https://linkedin.com/in/sadikerimi">LinkedIn</a>
+        <a class="btn" href="#projects">Projects</a>
+      </div>
+      <div class="email">kerimisadi@hotmail.com · Sarıyer, Istanbul</div>
+    </div>
+    <figure class="mapcard" style="margin:0">
+      <canvas id="map" width="900" height="520" aria-label="Map of Istanbul showing EV charging locations and candidate parking lots"></canvas>
+      <div class="box" id="box" hidden><b>Avrupa yakası · densest demand</b></div>
+      <div class="legend"><span><i style="background:var(--accent)"></i>Existing charging locations</span><span><i style="background:var(--signal)"></i>Candidate İSPARK lots (692)</span></div>
+      <figcaption class="legend" style="margin-top:4px">Data from my EV charging optimization project · İBB Open Data</figcaption>
+    </figure>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap entry">
+    <div class="label">01 / About</div>
+    <div class="prose">
+      <h2>I like problems where the data is messy and the answer has to hold up.</h2>
+      <p>I study Artificial Intelligence and Data Engineering at ITU. My work so far spans object detection on high-resolution images, careful model evaluation on small medical datasets, and integer programming for city-scale infrastructure planning.</p>
+      <p>Right now I am training YOLO models at AYTU Tech and working with two teammates on a deep learning project that reads Turkish corporate disclosures. I am looking for a summer 2027 internship in machine learning, computer vision or data science.</p>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap entry">
+    <div class="label">02 / Experience</div>
+    <div>
+      <h2>Experience</h2>
+      <div class="job">
+        <h3>R&amp;D / Computer Vision Intern</h3><span class="when">Aug 2026 – present</span>
+        <span class="org">AYTU Tech</span>
+        <ul>
+          <li>Research on object detection architectures and image processing.</li>
+          <li>Building a fruit ripeness classification model with YOLO, using tiling strategies for high-resolution datasets and hyperparameter optimization.</li>
+        </ul>
+      </div>
+      <div class="job">
+        <h3>Campus Ambassador</h3><span class="when">Feb 2026 – Sep 2026</span>
+        <span class="org">Huawei Student Developers</span>
+        <ul>
+          <li>Represented Huawei Student Developers at ITU and organized technical workshops, seminars and community events.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap entry">
+    <div class="label">03 / Projects</div>
+    <div>
+      <h2>Selected projects</h2>
+
+      <article class="project feature">
+        <div class="phead"><h3>EV Charging Infrastructure Optimization, Istanbul</h3><span class="meta">2026 · team of 3</span></div>
+        <div class="tags"><span>MILP · PuLP/CBC</span><span>Greedy heuristic</span><span>Logistic growth model</span><span>Folium</span><span>Streamlit</span></div>
+        <p>Which charging stations should Istanbul expand, and where should it open new ones, with a 150M TL budget? We modeled it as a mixed-integer linear program over real İBB open data: existing stations, İSPARK parking lots as candidate sites, and district-level demand projected with a logistic EV growth curve.</p>
+        <div class="metrics">
+          <div class="metric"><span class="tag">stations</span><div class="v num">2,931</div><div class="k">existing charging stations modeled</div></div>
+          <div class="metric"><span class="tag">candidates</span><div class="v num">702</div><div class="k">İSPARK lots as new-site options</div></div>
+          <div class="metric"><span class="tag">MILP vs greedy</span><div class="v num">−32.9%</div><div class="k">unmet demand for the same budget</div></div>
+          <div class="metric"><span class="tag">cost ratio</span><div class="v num">~44×</div><div class="k">cheaper per socket to expand than to open new</div></div>
+        </div>
+        <figure class="chart" style="margin:0">
+          <svg viewBox="0 0 640 170" role="img" aria-label="Unmet demand: MILP 8,278 versus greedy 12,334 units per day; solve time MILP 5.61 s versus greedy 1.30 s">
+            <g font-family="JetBrains Mono, monospace" font-size="12" fill="var(--muted)">
+              <text x="0" y="16">Unmet demand (units/day, 2025)</text>
+              <text x="0" y="104">Solve time (s)</text>
+            </g>
+            <g font-family="IBM Plex Sans, sans-serif" font-size="13" fill="var(--ink)">
+              <text x="0" y="44">MILP</text><text x="0" y="70">Greedy</text>
+              <text x="0" y="132">MILP</text><text x="0" y="158">Greedy</text>
+            </g>
+            <line x1="70" y1="26" x2="70" y2="78" stroke="var(--rule)"/>
+            <line x1="70" y1="114" x2="70" y2="166" stroke="var(--rule)"/>
+            <rect x="70" y="30" width="322" height="18" fill="var(--accent)"/>
+            <rect x="70" y="56" width="480" height="18" fill="var(--muted)" opacity=".55"/>
+            <rect x="70" y="118" width="480" height="18" fill="var(--accent)"/>
+            <rect x="70" y="144" width="111" height="18" fill="var(--muted)" opacity=".55"/>
+            <g font-family="JetBrains Mono, monospace" font-size="12" fill="var(--ink)">
+              <text x="400" y="44">8,278</text><text x="558" y="70">12,334</text>
+              <text x="558" y="132">5.61</text><text x="189" y="158">1.30</text>
+            </g>
+          </svg>
+          <figcaption>MILP leaves a third less demand unmet; the greedy heuristic is 4.3× faster.</figcaption>
+        </figure>
+        <p>A sensitivity analysis on the overload penalty showed a clear phase transition between a regime that tolerates overloaded stations and one that invests to remove the overload. Results are explorable in an interactive Streamlit app with a Folium map.</p>
+        <a class="more" href="https://github.com/sadikerimi/Optimization-of-Electric-Vehicle-Charging-Infrastructure-in-Istanbul">View repository →</a>
+      </article>
+
+      <article class="project feature">
+        <div class="phead"><h3>HepaData: Liver Disease Prediction</h3><span class="meta">2026 · BBF304E · team project</span></div>
+        <div class="tags"><span>scikit-learn</span><span>5×2 cross-validation</span><span>Wilcoxon tests</span><span>SMOTE</span><span>Permutation importance</span></div>
+        <p>An end-to-end classification study on the Indian Liver Patient Dataset (583 patients, 570 after cleaning). We compared Logistic Regression, SVM, Random Forest, Gradient Boosting and an MLP with nested tuning, 5×2 cross-validation and statistical significance tests, then ran ablations, class-weighting and SMOTE experiments, learning curves and a multi-seed robustness check.</p>
+        <p>The dataset is 71% positive, so accuracy alone was misleading: Gradient Boosting and Random Forest both reached 72.8% test accuracy, but Gradient Boosting caught only 15% of healthy patients. We selected Random Forest on balanced accuracy and MCC instead.</p>
+        <div class="metrics">
+          <div class="metric"><span class="tag">final model</span><div class="v">RF</div><div class="k">Random Forest, chosen over GB</div></div>
+          <div class="metric"><span class="tag">balanced acc.</span><div class="v num">0.737</div><div class="k">vs 0.557 for Gradient Boosting</div></div>
+          <div class="metric"><span class="tag">ROC-AUC</span><div class="v num">0.814</div><div class="k">held-out test set</div></div>
+          <div class="metric"><span class="tag">MCC</span><div class="v num">0.435</div><div class="k">vs 0.203 for Gradient Boosting</div></div>
+        </div>
+        <a class="more" href="https://github.com/sadikerimi/BBF304E_2526_HepaData">View repository →</a>
+      </article>
+
+      <article class="project">
+        <div class="phead"><h3>Market Reactions to Turkish Corporate Disclosures (KAP)</h3><span class="status">in progress</span></div>
+        <div class="tags"><span>PyTorch</span><span>BERTurk</span><span>TabiBERT (8k context)</span><span>TF-IDF + LightGBM</span><span>Event study</span></div>
+        <p>Deep learning course project with two teammates. We are building a 2022–2026 dataset of KAP disclosures from BIST50 companies, including attachment text, and predicting abnormal, market-adjusted price reactions over 1 to 90 trading days by combining disclosure text with price history.</p>
+        <p>My part is the text side: the annotation guideline and tool, fine-tuning BERTurk against the long-context TabiBERT on about 2,000 manually labeled disclosures, and the TF-IDF + LightGBM and BERTurk baselines.</p>
+      </article>
+
+      <div class="minor">
+        <article>
+          <h3>Image Captioning App</h3>
+          <p>Streamlit app around Salesforce BLIP that captions uploaded images, with controls for temperature and caption length.</p>
+          <a class="more" href="https://github.com/sadikerimi/ImageCaptioning">Repository →</a>
+        </article>
+        <article>
+          <h3>Stock Prediction with PyTorch</h3>
+          <p>A learning log from tensors and autograd to an LSTM, building toward a full stock price forecasting pipeline.</p>
+          <a class="more" href="https://github.com/sadikerimi/stock-prediction-with-pytorch">Repository →</a>
+        </article>
+        <article>
+          <h3>Lecture Implementations</h3>
+          <p>Notebooks implementing numerical methods from coursework: number representation, error analysis, Taylor series convergence.</p>
+          <a class="more" href="https://github.com/sadikerimi/Lectures">Repository →</a>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap entry">
+    <div class="label">04 / Toolkit</div>
+    <div>
+      <h2>Toolkit</h2>
+      <div class="skills">
+        <div><h3>LANGUAGES</h3><p>Python, C/C++, SQL</p></div>
+        <div><h3>ML &amp; DATA</h3><p>PyTorch, TensorFlow, scikit-learn, YOLO, Hugging Face Transformers, Pandas, NumPy</p></div>
+        <div><h3>OPTIMIZATION</h3><p>Mixed-integer programming with PuLP/CBC, heuristics, sensitivity analysis</p></div>
+        <div><h3>TOOLS</h3><p>Git, Streamlit, Folium, Jupyter, Google Colab, VS Code</p></div>
+        <div><h3>SPOKEN</h3><p>Turkish (native), English (B2), French (A1)</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap row">
+    <span>Muhammed Ahmet Sadi Kerimi · kerimisadi@hotmail.com</span>
+    <span><a href="https://github.com/sadikerimi">github.com/sadikerimi</a> · <a href="https://linkedin.com/in/sadikerimi">linkedin.com/in/sadikerimi</a></span>
+  </div>
+</footer>
+
+<script>
+const PTS = {"st":[2790,3419,9228,1975,8768,2800,8811,2796,9438,2127,8886,2234,4283,2765,2916,2988,10850,2849,10315,3032,10339,3233,11043,3939,9135,3197,9534,2935,9352,3001,10638,3045,9458,2932,10850,4673,5758,2299,5510,3905,11057,4731,11209,4676,8122,2683,8646,2596,8617,2558,6780,2695,7849,2814,7023,3148,2964,3086,9267,2315,5636,2257,7802,2779,8352,3115,8361,2348,5943,2232,10290,2268,9625,4715,8968,4513,8803,2154,7144,3379,8528,3278,10578,3291,8726,4182,9701,2553,7125,1834,10747,3492,10239,3139,9534,2934,9490,2977,9943,2737,9550,2940,8199,2539,8763,2381,8602,3579,9553,4560,9518,2012,9661,2592,10449,2733,7645,2800,8434,2013,7395,2218,9693,2426,9636,2646,9517,3921,8500,1845,7058,2257,8370,1925,10701,3304,7147,2267,9411,3989,11028,3341,10898,4306,5901,2299,10765,2690,8635,2499,9281,2337,10219,2968,9098,2606,8715,2194,10303,3029,8187,3144,10226,2990,8561,2742,6717,2147,10017,2310,10333,2613,9659,2204,9454,2162,9509,2446,9224,2893,9785,2707,11001,3368,10061,2403,6921,2245,11026,3927,7373,4503,8601,2279,8554,3171,8921,2846,8911,2850,10603,2624,9370,2527,8169,3387,6493,4519,8778,1781,10787,3120,8783,2122,7086,2772,9560,2933,6594,2767,10704,3326,10010,2770,8746,2125,10377,2578,10317,2590,10692,3287,8406,2315,8315,2613,2965,3037,3116,3022,6938,2243,8467,2408,4419,2697,6481,4036,6396,4231,9861,4820,8710,4578,7631,2114,8659,2452,10534,2861,10051,2322,10336,4648,7086,3020,10408,2647,10551,2912,10917,4256,8201,3202,8402,3617,9437,2539,7213,2294,3205,3042,8289,2475,10190,2940,6331,2399,9565,2376,8172,2567,7602,2132,8797,2828,10449,2869,10411,2874,687,3200,11246,4031,8629,2259,10306,2900,7177,2813,8290,2462,9942,2373,9626,2660,10415,2797,9696,2591,8573,2314,10288,2793,9747,3631,7758,2096,9334,4044,7316,3030,10356,3211,6913,3111,7597,2845,7636,2813,8613,2384,7791,2075,6822,2052,8843,3523,7395,2289,10584,2831,7345,2907,6938,2231,10329,2598,8522,3405,10804,3010,10696,3320,10747,3326,8409,2445,8417,2398,6788,2422,8858,2093,10621,2880,5041,3811,8273,4007,9444,2128,11037,3335,8647,2132,2370,3065,2593,3452,10617,2978,10503,2737,10311,2779,10183,2523,10204,2526,8359,2111,7779,4331,7654,4183,8216,3254,7797,2782,8535,3267,7299,3177,8080,4149,7671,2110,7023,2580,10588,3281,7634,2836,7203,2039,7071,1970,8793,2341,7137,2918,9333,3997,6863,2352,10291,2808,10587,2862,7337,2835,10367,2859,7197,2778,8811,2857,9608,2927,10797,3291,9332,2302,11060,3865,9584,2204,9010,3844,9570,4713,2600,3020,8399,2950,10269,2600,3203,2914,7337,2886,10693,2953,6590,3840,2468,3003,7275,2029,7289,2574,8408,2394,10060,2944,10119,2988,2250,3699,8697,2231,8461,2070,7147,3376,8798,2518,9635,2408,6811,2658,6897,2934,8742,2582,8419,2506,8798,2089,7915,4795,10796,3324,6070,4093,10344,2882,10368,2820,9075,2863,8319,2733,11042,3342,7016,3072,7322,2248,9014,2881,8287,3426,8563,3239,9802,2412,9857,2971,7275,2398,10202,3137,9576,2146,8393,3329,10606,3005,9714,2340,9538,2207,925,3052,10804,3001,8613,2723,8390,2532,8497,2968,9200,2342,11068,3604,9471,3163,2997,2971,6786,2243,9550,2523,10324,2859,9276,2999,9740,2942,10266,2860,10846,2757,7755,2100,6789,3065,8967,2624,9549,3172,10001,2830,7516,1962,10678,2942,7306,2369,10590,2815,7562,2812,7313,2290,7390,2288,7306,2290,10722,3346,8315,2766,8066,3072,8173,3180,6637,3659,3667,2877,7164,2301,8088,3280,7415,3000,5527,2762,7913,3293,6784,3054,7245,2656,10173,2497,10561,3053,7119,2600,9702,2241,7127,2270,7950,3030,8374,3442,7286,2987,7293,3084,10857,2775,7561,2976,7618,2788,7904,3129,6097,2375,5207,3844,8675,2399,9165,2236,7628,4302,8504,2977,7491,2300,8562,2646,10375,2564,10370,2604,10558,2606,10274,2865,8726,2214,10601,3016,10268,2539,10735,4350,10140,2650,8347,2051,9677,2434,7087,2295,8615,2287,7450,3000,8589,4595,10586,2667,8536,2811,5127,3651,8702,2222,7668,2958,7503,2959,9606,2093,10925,4066,8858,2619,5906,2287,8319,3514,8457,2275,8377,2720,10360,3319,10367,3275,9519,3066,10281,2212,8742,1771,9322,3124,10224,3381,10394,3310,10375,3326,10372,3324,8653,2595,10268,3229,8806,2124,8332,1941,10675,3341,10657,2895,10374,2707,4938,3275,9880,3006,10011,2790,8332,2573,10009,2790,8613,2724,8372,3160,8605,3207,7271,3127,10292,3033,8251,2861,10852,3017,9754,3058,10546,2619,9221,2751,10386,3294,8626,2401,10930,3567,11042,3344,9389,2186,6120,2352,10564,2862,9663,2125,10358,2566,9680,2144,8425,1952,10233,3221,7316,3236,10472,2625,8168,2585,8573,2839,6895,2028,8696,2235,9974,2330,10549,3051,7538,2133,2347,3780,8400,3267,9832,2750,8138,2760,9047,2295,8939,2308,7002,2199,5100,3630,10269,2859,7923,4027,9610,3068,9194,3211,9122,3234,9140,2722,9329,2242,8602,2554,9208,3232,8980,3393,5085,2491,8468,2779,5512,3137,10532,2878,7104,2089,10194,2949,7496,2798,8162,3414,9802,2712,8168,3176,8478,2658,8632,2515,9251,3206,8758,1786,10737,2253,10810,2966,10451,2848,9332,2309,5596,3195,5039,3702,6963,2754,10595,3071,8928,2844,9427,3962,9149,2161,6933,2309,8643,2547,8570,2500,9936,2326,7665,2087,10712,3363,11909,1378,6776,2477,2932,2954,9669,4158,10781,4307,6860,2447,9044,1989,11015,4151,10916,4246,8633,2796,10375,2562,8348,2655,7339,2923,10518,2840,6779,2137,8570,2531,9040,2744,8800,2659,6813,3090,7419,2426,10683,2976,8390,3315,7050,2855,11020,3103,10959,3816,7097,2075,7081,2077,7096,2064,7056,2084,7055,2073,7071,2064,7080,2065,7055,2075,7051,2068,7071,2058,7058,2045,6728,2480,8309,2607,7129,2936,8376,2633,7283,3171,8155,2612,7101,2151,7257,2799,7244,2801,3140,2926,10534,2855,6959,2325,10651,2909,7163,3024,8720,2225,10965,3051,11001,3091,10168,2373,7443,2916,6964,2349,6857,2170,8842,2763,7184,2753,11212,3441,9967,3054,9145,2843,9154,2841,9244,2921,9183,2900,9260,4035,10884,4310,10746,3054,7130,2857,11035,3183,10543,3115,9193,2216,9575,2025,10990,2996,10612,2830,10650,3369,5522,3249,10462,2869,9809,2572,8617,2354,8749,2333,8656,2431,10293,2224,9845,2577,7982,3977,10805,2845,5213,2433,9930,2895,10697,3367,8375,3270,9532,2155,6715,3110,9366,1999,11642,3151,9955,2737,8581,2802,10011,2989,9116,2540,8779,2133,10371,2817,7354,2204,10118,3215,9201,1981,9705,2461,8125,2715,8208,2746,9583,2150,10192,2616,6998,2089,6999,2096,7485,2949,7188,2294,7178,2313,7182,2297,9620,2659,9229,2323,8343,2744,8556,2493,7250,3227,10014,3021,9996,2612,7076,2286,8842,2202,6420,3285,4158,2762,10713,4292,10505,2727,10687,2958,8178,2495,11048,3455,8610,2735,10964,3323,9220,2488,9150,2495,9209,2481,8374,2323,9193,2907,9211,2110,7437,2215,10731,3353,10698,3291,7118,2456,6735,2551,6768,2613,9191,2219,8735,2261,9545,2752,6809,3856,10683,3286,7490,2294,7285,2553,7065,1972,10736,3380,10760,2861,10313,3242,8604,2560,3109,2947,7421,5581,6918,2357,10160,2609,8854,2865,8318,2966,7629,2777,10202,2525,7225,2221,7284,2394,8793,2853,8592,2235,10390,3316,8740,2733,10779,2867,9264,2776,6765,3132,6735,2276,9676,2667,9808,2694,7317,2035,8450,2131,9604,2164,2481,2999,3084,2950,7586,2813,9482,3093,10634,2910,10547,2835,8815,2755,8374,3293,8194,2614,10424,2776,6920,2437,8621,2579,9197,2932,8009,2640,10690,3345,8514,2620,6973,3137,8568,2469,8579,2282,8880,2575,7602,2803,8923,2637,7048,2292,10492,3333,10769,2975,8573,2498,9928,3051,7234,3262,8209,2618,9179,1949,6250,2394,10418,3292,7320,2266,10378,2839,8613,3219,10199,3021,7209,2298,8694,3566,10558,2880,7483,2232,6939,2230,7242,1997,7059,2248,7245,2020,7301,1959,7279,1996,7281,1965,7284,2010,7291,2027,7254,1972,6764,2754,8512,2520,2259,2946,6992,2333,6891,2030,11046,3886,10622,2999,7829,4018,10886,2820,6295,2398,10258,2602,10277,3038,7425,2236,9604,3933,10339,2482,9655,3740,9885,2763,10864,3662,10235,2991,7339,2834,8160,2612,9505,3093,8696,2706,11033,3657,8741,2562,8495,1847,7688,2184,10886,3314,6922,2360,9511,2317,8446,2778,8216,3401,7438,2900,8389,3542,10744,2949,8561,3139,8182,3320,7172,2023,7159,2036,8887,2597,4177,2766,7494,2914,8774,4460,8548,3139,7378,2239,7201,2299,7645,2062,9478,2571,10635,2963,9326,2688,7251,2899,8312,3533,8545,3318,8362,3481,8365,3493,8370,3489,8334,3424,9807,2894,7667,2773,7731,2862,9613,2387,8431,3609,9325,2090,7677,2768,6794,3073,9084,2545,9774,2162,10421,2838,10302,2755,8583,2625,9775,2377,7188,1995,10381,2832,8192,3381,10691,3328,9970,2332,7132,2042,8320,2085,8388,2781,7255,2872,10319,3160,8831,2113,9104,2027,8562,3602,8747,2755,8240,3361,10595,2831,4102,3308,4233,3009,6757,2992,9653,2767,7551,2017,9344,2100,7336,2711,8413,1959,8747,2144,10191,2846,8112,3209,9085,2542,10526,2853,8747,2153,8668,2261,7285,2394,7013,3042,8762,4163,7101,2413,10312,3174,10645,3335,8211,2428,8453,2053,6503,1899,8230,2564,8245,2558,8310,3476,8694,2869,8623,2652,5078,2495,7807,2789,10020,3006,8827,3584,10011,2799,8275,3496,8232,3480,10357,2679,6808,2417,10613,3060,9008,1983,7680,2158,6801,2406,2974,3738,7447,2259,8916,2775,7579,2172,8456,2036,2381,3788,10708,2797,8617,2389,8786,2754,10760,3011,10376,2724,10649,2960,10310,3008,8155,2601,8201,2764,5072,3596,10357,3334,8588,2263,7165,2101,11631,4521,10360,2475,10327,3076,9634,2409,10200,2441,10571,2970,7135,2064,7022,2514,7007,2523,9644,3773,7299,2340,9362,2273,8534,2208,8335,3242,8778,2319,7600,2142,8968,4654,8330,3415,8330,3433,8347,3455,8336,3449,9651,2501,9194,1967,8119,3177,8853,2095,9562,2783,8691,2372,9243,2167,9497,3955,7800,2783,6985,3115,9443,3957,8205,3363,6764,2144,9706,2925,9835,2415,8271,2924,9775,2939,9115,2881,7576,2991,8419,2405,11074,1955,11714,2221,12704,1470,11748,1662,11601,2499,11626,3308,12651,1727,13493,1339,11885,2064,8174,2761,11035,2215,11703,2314,14227,1751,11854,2102,13394,1784,12090,1372,12645,1509,11819,1632,13182,2607,11517,2330,11807,1511,11212,2225,11266,3008,12247,1113,12927,1047,13564,1492,11951,3387,11229,2204,10981,2269,12633,2464,13671,1278,12241,2567,7058,2035,7061,2063,7086,2059,7096,2060,7072,2080,7051,2063,7046,2049,7044,2037,7041,2032,11716,2413,14220,1123,10826,2199,12291,1378,12063,2358,11650,1812,11260,3016,11464,1986,13472,586,12003,2225,11793,1479,13963,3122,11154,2670,13192,905,7057,2027,5653,2255,10308,2619,10560,2995,12493,4003,8156,2710,8140,2769,11609,2071,12235,1149,11895,1269,16662,3978,11323,1994,11454,2187,13241,2060,12395,2089,11759,2457,11563,2030,12887,2734,12096,1641,11015,2403,12619,1316,10792,2222,11898,1360,12575,2330,12814,2164,11282,2998,12407,2329,11119,2383,13543,1255,8326,2560,8182,2731,8212,2723,8182,2726,7354,2824,8117,2757,7030,1830,13192,1710,9781,3038,11206,3941,9333,2519,9180,2706,8536,3230,8213,2115,10738,3291,7949,1977,8630,2781,10963,3595,8676,2291,6967,1935,10315,2746,10644,2960,8780,2309,10329,2898,10675,3056,8092,2913,10743,3339,10359,2881,8613,2510,9318,1995,9591,3072,9007,4547,10247,2592,2981,2932,2925,2978,10304,2853,9355,2097,9622,2811,10477,2863,10449,2856,6933,2409,10464,2747,8750,1783,7028,2299,8708,2487,9239,1943,9787,2843,8789,2131,8466,2259,10227,3057,8807,2780,8707,2019,9411,4558,8661,2446,6759,2085,7079,2091,7070,2009,11448,2185,11610,2155,11519,1922,11158,2778,11030,2767,11249,2359,11233,2191,14605,1719,11537,3326,12030,3514,11417,2419,11363,3225,11461,3139,11894,3311,12655,1856,19082,3561,13638,1506,10624,3028,8957,2308,10348,2950,10695,3383,10632,3019,10796,3020,10386,2568,7688,2853,7156,2000,10148,2978,7713,2933,7715,2796,5626,2647,8339,2665,10963,4139,10911,2524,12134,1190,11448,2187,10837,2126,10752,2007,11574,2049,11199,2337,14743,4173,11034,2341,10973,1936,12070,1415,12065,1390,12821,2136,12481,2179,12657,1983,11198,2495,11215,2376,11479,3456,11948,3416,12209,1203,12475,1301,13674,893,11640,2241,12172,1388,12478,1304,13533,1615,11521,2259,11567,2139,13786,2969,12345,1407,11529,2005,11627,2260,10907,2436,8269,3585,1649,2863,10607,2887,10506,3221,9253,1925,10254,2420,9520,2004,7081,2986,8558,2551,10278,2723,6093,2454,1203,2838,7144,2272,10971,4129,7615,2803,7806,2787,8691,2246,10954,3328,10681,2918,7932,1999,10849,3583,6954,2917,10534,3115,8197,3382,10586,2767,6762,3419,10522,2632,10664,3112,7113,2101,10894,3999,9128,2537,6840,2793,10107,3254,6877,3096,9570,2229,10223,2269,7063,2246,7250,3304,7309,2895,11063,3921,8997,2842,8656,2207,8209,2361,7092,1971,9452,2242,8600,3258,8600,3344,8608,3219,7377,2834,9634,2653,9328,2107,8201,3273,7307,2371,9117,3154,9128,3152,6827,3024,9338,3994,9180,2913,8079,3287,7772,2080,11036,3336,10364,3013,8444,2299,8317,2073,9578,2351,6839,3118,7072,2291,7009,2258,7411,2280,10805,4149,10181,2351,7071,2930,10227,2986,11001,3971,10569,3425,7079,2095,9369,2177,9117,2025,11429,3271,11966,1390,12852,1947,13865,1634,12021,2217,11886,3286,11498,3282,12865,2729,12068,4349,12895,986,11853,2178,13516,612,12142,2029,11341,2388,12149,2432,12148,2435,12187,1175,12679,1439,13483,1512,13582,1586,12859,1860,12863,1856,9453,2092,8594,3254,7838,1987,8690,2432,10864,2794,9930,2345,7366,2296,9402,2237,7643,4136,10285,2903,10480,2663,11006,3360,9773,2297,9736,2141,6704,2848,10997,4132,7219,5192,5031,3875,6561,2248,6788,3630,10859,2366,11126,2322,10875,2260,13565,1490,11807,1696,12050,1449,10921,2415,12687,1560,12686,1479,12073,4336,10941,2438,12390,1408,11528,2066,11783,2257,11927,2228,11923,1395,12484,1322,7472,2810,10466,2704,10634,2901,8822,2804,8628,2765,7451,2948,9145,2228,7857,2818,7565,2979,8381,2621,11257,2108,14025,1063,12503,2058,11221,2246,12333,2402,11749,1558,12250,2377,12888,1884,12869,1882,12610,2481,12825,2481,14032,1427,12868,1966,13843,2965,11691,2156,11706,2135,12934,1939,10915,1911,12809,2465,12867,1244,14027,1348,13431,1353,12216,1159,7661,2841,9743,2300,6354,2390,10150,2240,10003,2248,10096,2395,9783,2214,10727,2991,8324,2635,10269,2344,7356,3020,8605,2649,8126,2681,8128,2627,8269,2903,7087,2980,8345,3032,9167,2881,8345,3014,13207,2577,11354,2452,13071,2033,12041,1331,11348,2675,11765,1997,12044,2518,12457,1319,11541,1985,12478,2184,13745,1073,11733,2124,11715,2122,11475,3149,11289,2727,11559,1953,12001,1429,11876,1596,12208,1350,10587,2758,8335,2036,10432,3296,8577,3403,6607,4047,9625,2637,10400,2697,9690,2209,9332,2324,10860,3064,7807,2012,10970,2132,11608,2530,11722,2265,11550,2273,10956,2405,11697,2541,11709,1984,13244,396,11659,2120,11579,1833,11836,2201,10898,2517,15603,3068,12259,2624,13610,1470,11466,1931,13464,697,10851,2060,7314,2286,11991,1471,13304,1450,11897,2366,12032,2473,12457,1370,11447,2104,11748,1988,11247,2357,9610,4753,5070,3583,7568,2986,7583,2981,7570,2989,8795,4457,9687,2397,9372,3087,8900,1808,9522,2331,8214,3495,10957,2070,11860,1636,12137,2335,12642,1741,11338,3158,11717,1686,12903,2547,11630,2072,11741,2096,11753,2099,12418,1320,12135,2223,11274,2515,10674,3287,6645,4051,6921,2044,7059,3067,8564,3142,10191,2932,6604,3786,9443,2660,10266,2767,8709,3564,8691,2360,9355,3998,6206,4123,6197,4155,6004,2356,7676,2802,7675,2815,6323,2433,7092,2408,7114,2204,6730,2949,9500,2694,7595,2006,10311,3178,9060,1947,10391,2817,7040,2203,9424,2903,14422,1046,16855,3735,12505,2279,10930,2442,11496,1844,11587,2501,13558,1437,13401,346,12238,2339,11581,2517,13463,1307,12298,1368,12072,2567,11367,2673,12059,2268,9267,2690,9201,4136,10661,3287,9566,2295,9366,2875,10555,2897,10896,4135,10825,3061,11023,3896,8379,3445,7459,2291,11606,3144,11052,2700,12239,2301,13557,649,13136,2533,12055,1345,11990,2055,11138,2775,11167,3029,10992,2662,12148,2882,12618,1071,10897,2442,12883,1071,12276,2277,11447,2182,11576,2089,8929,1842,8305,3809,10182,2795,7605,2225,10377,2714,8624,3138,7514,2297,13636,1504,11779,2126,10001,2285,9114,1950,9218,2941,10238,2479,7926,2837,9570,2066,8212,3146,10428,3981,10708,2993,13407,778,12090,1465,10861,2240,13476,1496,12994,957,11555,2276,13203,875,10957,2563,11500,1884,12048,1376,11038,2230,13803,3220,11615,2045,11600,1854,11855,3070,6126,2366,8664,2472,8893,2817,8401,2516,10631,2894,7795,2778,10622,2892,7203,2444,10320,2753,8851,1792,10163,2772,10254,2779,12554,2282,12952,2474,12073,1370,12175,2110,11610,1864,12645,1229,13972,1393,10762,2339,13527,1378,14394,1295,12045,2259,11590,2050,11811,2070,11200,2757,11210,1858,11267,2022,11434,3146,12437,1275,11767,2091,12816,2122,13314,888,13322,347,12385,2755,11897,3317,11106,2878,12300,1385,12784,1154,13177,2629,12233,2518,12900,2468,10842,2233,11637,2243,11661,2238,10954,2445,11148,1875,13140,2535,11433,1903,12978,2470,11464,3112,13430,1449,10967,2502,12859,1002,13245,1158,11992,2215,13598,3243,13465,552,10936,2082,12502,2244,16239,3866,11520,2555,10734,2248,14616,1576,11305,1766,11795,1484,13040,1880,13532,1622,13645,366,8233,2424,13909,3082,12437,2092,11209,1952,11412,3111,11363,3084,12871,2734,11759,2389,11161,2256,13571,612,12211,1135,12852,1331,11756,2471,13438,1558,12349,1402,11909,4289,11911,2140,11225,2353,12198,2841,12884,1917,13457,1433,13299,2042,13130,1089,13127,1095,11673,2483,11697,1733,12136,4318,12128,4277,11707,2344,13598,831,13520,833,12774,1145,11523,1877,10855,2251,10752,2097,11082,1927,10885,2410,12589,2004,13796,3051,11025,2322,11450,2188,12477,2336,12862,1982,13033,925,11323,2084,9990,3085,8204,2789,9676,2202,10115,3229,8777,2121,8861,2590,11043,2162,12723,1179,12299,1383,11060,2098,12778,962,12852,1946,11926,2189,11422,3531,11912,1559,12686,1717,10988,1936,14103,404,10893,1927,10768,2002,10886,2109,12232,1123,8601,3209,6624,4034,9042,2721,8351,2644,8494,2639,7412,2958,7269,2344,9843,3120,10001,3090,10890,2064,13816,894,12670,1699,12284,2672,12130,4282,13099,4072,11357,2130,11662,3298,10956,2226,16220,3862,16550,3778,12890,1084,12244,1250,12207,2308,13493,629,13285,1418,14035,851,14372,1031,13708,885,14397,1032,13935,803,11529,2099,12491,1140,10909,1969,12992,1187,12931,1199,9806,2430,10368,3223,8730,1795,9543,2642,10817,2976,10484,2963,10206,2792,10290,2812,8847,2437,8393,3304,8346,3329,6803,3090,6885,3315,9534,2140,10601,3051,10856,3073,10635,2982,9381,2629,10213,2974,7197,2207,10825,4381,7360,2938,10910,2526,11183,2958,11552,3258,11813,3245,13676,1422,11450,2185,11822,4236,12430,2190,12845,1835,12492,1279,13191,1866,13125,1106,11938,2091,11749,2030,8131,3013,5629,2443,9127,2528,10026,2943,8613,2747,10478,3359,8776,1803,8656,2252,7347,2927,10133,3006,10698,2739,12833,1013,12160,1421,11485,2191,10976,2509,12283,2363,12434,2267,12469,2236,13028,956,11574,2015,12527,1349,10733,2170,11912,2215,13175,897,11020,2744,10208,3063,7493,2838,9466,2278,5659,2193,10368,2635,10929,2964,10350,2561,10210,3395,9733,2960,8221,2094,10405,2801,9425,2698,10715,3306,11164,3025,11858,2066,10624,2293,11149,2834,11217,3004,12461,1320,11673,2220,12204,1199,10791,2338,11902,2184,13258,1112,11819,2129,12569,1336,10649,3353,10881,3303,10469,2765,18995,3564,13167,1914,12204,2462,11621,2522,10870,2224,12051,1476,12768,2178,11196,2477,12127,1648,12153,1207,11974,1634,11977,1626,9702,2616,10744,3473,9174,2908,10285,2757,7342,2230,7128,2816,10320,2239,10161,2333,9756,2397,9734,2165,9896,2396,12017,1665,11975,1633,12251,2076,12654,2276,14013,1511,10718,2404,14662,1478,13535,691,13657,951,11722,3093,12090,1285,11434,2455,11813,1557,12299,2593,12440,2173,11612,1863,12873,1934,12494,2204,12149,1325,12657,1300,12072,2257,12712,1359,11469,3137,13011,1836,12878,2477,11308,1984,11886,1634,11686,2319,11179,3235,11048,2164,11938,1585,11472,3102,13500,689,12046,2158,18909,3529,11165,2274,14183,1483,12640,1407,16185,3861,12070,1601,12469,1323,12104,1219,13034,1870,12431,2279,11555,2109,13079,2599,13095,2628,13895,3071,10698,2403,10939,2469,11498,2166,11884,1366,11500,1753,12066,2164,11773,1522,11651,1875,13070,2252,11044,2239,12388,1793,16596,3982,13709,1542,8533,1973,13643,1478,13059,2591,12020,1467,12023,1677,13186,2631,7642,2837,7129,2018,7228,2370,8746,2052,7161,3040,9966,2892,7057,2262,10317,2775,7562,4195,11038,2164,10967,1912,13125,898,11567,2044,13921,2958,13166,2992,14109,1291,8587,4596,7818,2790,4974,2547,10302,3053,9846,2660,9575,3820,8897,1810,9298,2359,12055,2172,11017,2199,12959,2069,11357,2374,11939,2077,13076,1910,11970,2362,11660,1818,10860,2034,12727,1201,12901,1065,11269,2105,11054,2150,12759,966,13647,1491,11769,2093,13487,781,11038,2107,12262,1107,10892,2433,11308,1759,13712,1472,13805,3163,12599,1343,13757,1581,11466,2139,12099,2020,12813,1834,14147,1564,11469,3475,12243,1150,12272,2368,11807,2433,12166,1752,11195,2012,11944,2080,13492,1321,10748,2270,11732,1678,13073,2636,13052,2983,12127,1703,12297,1249,10998,2162,11621,2100,13287,1112,11260,2423,11933,2177,11955,2227,13151,2620,13311,1806,12336,1413,11582,2107,11855,1576,12346,2431,12768,964,14355,1246,11392,2380,13538,1329,15901,3847,11746,2055,16598,3956,11242,2666,12255,1117,13139,1093,13631,1481,12484,2325,11686,2288,10884,1901,10711,2456,16434,3892,12950,1332,12371,1100,11569,2213,11830,2240,11547,2194,13819,1543,14374,1232,11109,2122,12802,2098,10921,2010,11750,1679,11940,1619,11301,2740,11493,2160,11513,2055,13279,880,12138,1649,11826,1480,11831,1598,11845,1559,13645,3213,12770,2045,11573,2250,12235,2296,10767,2478,12527,1325,11655,1771,13486,1330,11726,2070,12388,1086,12828,2540,12777,2207,12464,1220,12324,1088,12066,1320,11318,2396,12183,2386,12763,2453,11438,3124,11664,2600,12511,2340,14078,1297,12936,1913,12823,2465,11287,2002,11422,2028,11430,2174,12562,1042,13051,1165,11450,3132,12468,1220,11050,2101,11055,2100,11063,2103,11511,2191,11716,1980,12089,2507,11763,2138,11535,2010,12734,1279,11570,2047,11679,1981,11326,2080,12066,1413,13744,1565,13608,1532,11773,2262,14067,476,13082,2033,11086,2149,11611,2515,12751,2447,12184,1671,13467,1391,11742,3300,12494,1164,13070,2638,13501,1638,13278,2097,11631,3291,13517,1384,11519,2221,13107,2038,11166,2423,12720,1856,13441,672,13132,1116,13621,1532,13246,853,11004,2549,11046,2453,11046,2452,11166,3078,12420,2250,11935,1539,13701,509,11968,4175,12866,2641,13488,1423,12838,2355,13552,1440,12820,2514,12657,2371,11924,2256,11661,2207,10729,2099,11124,1920,12287,2447,11644,2435,11140,2777,11618,2471,12403,1316,11635,2443,12388,1318,12326,2338,12209,2537,12336,2404,12230,2917,12039,4365,11750,2088,12361,1089,13162,2581,12125,2390,11209,2460,11259,2352,12238,1132,11854,1582,11911,2076,11392,2062,12106,1283,11434,2177,12584,1255,10683,2227,10940,2405,11006,2457,12565,1123,12852,2556,10908,2398,8235,2424,11544,2095,10937,2268,13709,1534,13738,1510,13278,910,11962,2098,10995,2659,11243,2359,12896,2241,10954,1947,12361,1293,11494,2456,11775,1995,11228,2091,11943,2184,11524,2449,10777,2123,12080,1325,12192,1275,11654,1769,11175,2208,11463,3098,11400,2527,10925,2449,11454,2189,11678,1687,14101,588,11694,2479,11183,1860,13294,2636,12168,1380,11330,1788,1254,4209,16569,3937,13577,1495,12386,1364,12384,1361,13307,1429,14516,1002,14386,974,14447,959,12904,2684,14369,1058,10921,2438,12057,2300,12293,2188,12359,2154,12121,2230,11072,2849,10793,2082,11657,1985,12816,1318,13572,475,12057,2571,13225,2021,12702,2545,12775,2151,11173,2830,11109,2135,11420,2014,11616,3264,11713,1662,11110,2151,13529,1380,13501,813,11651,2064,12251,2311,11510,2052,12080,1369,12554,3315,11060,1945,12221,1379,13440,1379,11951,2173,11609,2036,10829,2366,11724,1734,11456,2190,11427,1896,12129,1383,11708,2093,11710,2093,13652,539,11490,2208,11880,2214,11591,2516,10917,1975,12322,2194,12141,2204,14437,973,12230,2169,8380,2860,8414,3076,8344,2917,7965,2835,8446,3006],"ca":[10380,2688,10456,2695,10450,2684,10460,2734,10430,2666,10445,2678,10413,2679,10566,2855,10616,2888,11441,2455,10535,2638,10524,2664,10738,2726,11492,2453,10664,2954,10667,2960,11345,2449,10660,2425,10203,2441,10905,2120,11753,2128,10439,2562,10035,2323,11067,3055,11062,3350,11070,3889,11249,1812,11274,1835,10254,2362,12363,1091,12384,1095,12331,1072,12852,994,10670,2960,10251,2523,10243,2240,10228,2271,10067,2270,10160,2329,10160,2334,11711,2127,9989,2382,9977,2394,9944,2427,9828,2189,10929,2174,9970,2395,9297,1987,9538,2130,9644,2521,9644,2520,9370,2287,9390,2256,10593,2842,11155,3000,8745,1815,8738,1804,8742,1810,8408,1964,12384,1072,2936,2937,2935,2921,10741,3366,9687,2382,10272,2429,9260,1940,2941,2958,10826,2704,9374,2328,10892,2413,10379,2605,10708,2074,11403,1723,11385,1745,12842,989,11453,2461,11551,2461,9546,2257,12399,1125,9940,2291,9032,2165,11767,2126,9214,2005,10805,3602,10272,2219,10384,2590,10380,2582,11637,1577,10720,2111,10392,2803,10268,2213,11725,1699,10611,2773,9221,1982,12336,1069,10316,2481,10957,2903,10745,2117,12447,1061,10402,2681,10636,2869,11075,2357,10389,4036,9670,2128,12050,1438,10005,2377,9952,3076,11554,2103,10406,2687,11157,2988,9665,2122,11624,2472,12836,934,12829,934,9702,2243,11144,1835,10005,2257,10244,2519,10467,2635,12259,2527,8731,1810,11580,1825,10572,2703,11453,1724,10125,2413,9924,3082,11359,3600,9426,2200,10169,2499,13032,1108,9944,2420,9916,2404,9140,2168,9098,2553,13166,1868,9398,2237,10492,2841,11074,2190,12816,920,11076,2358,10934,2970,11771,2117,10656,2959,9221,2006,9397,2238,10125,2412,10041,2224,13584,1465,10210,3149,10707,2088,10598,2455,8854,2764,11189,2994,11156,2986,10187,2442,11514,1920,11638,2463,10528,3137,12321,1059,11299,1760,8940,2272,10718,2111,11467,1722,9082,2353,8922,2511,10373,2558,10442,2700,10404,2701,10412,2694,10430,2660,10436,2653,10321,2700,10313,2689,10336,2772,10586,2855,10559,2864,10589,2848,11499,2451,10682,2953,10653,2958,10681,2933,11335,2456,11341,2441,10581,3066,10656,2442,10209,2435,11558,1871,10171,2379,10132,2406,10289,2262,10318,2970,10287,2262,12336,1090,10594,2689,10592,2682,10589,2652,11386,3556,11162,3201,10250,2522,10227,2246,10044,2277,10050,2288,10224,2289,10160,2353,10926,2124,10007,2366,9973,2400,2959,2941,2987,2935,10663,2648,10366,2513,10835,2106,9867,2229,10091,2401,10019,2342,9958,2301,9363,2292,9381,2295,11154,2993,8748,1819,8734,1798,8731,1795,7687,2005,6776,2386,6774,2378,11099,2336,11072,3260,12381,1073,10315,2281,10607,3011,10190,2390,11402,1724,10506,2697,10311,2270,10735,2524,2978,2944,10899,1924,10833,2107,9408,2294,8404,1916,10571,2628,10860,1886,10193,2384,10684,2100,9374,2292,10273,2429,9897,2397,11234,1786,10382,2695,11256,3235,10264,2330,10616,2916,8879,1844,10041,2362,10042,2367,10900,1988,10342,2798,10563,3081,10609,2786,9810,2368,9898,2765,11018,3581,9399,3965,10380,2584,9683,2433,10018,2264,10080,2327,8918,2531,9950,3078,11105,2179,13536,350,10717,2099,9969,2330,10480,2931,9630,2632,10413,2719,9582,2670,12225,2504,8854,2063,10895,2445,10006,2258,10016,2250,10677,2935,10072,2477,11174,3011,10504,2872,9982,2383,10601,2999,7716,2038,12566,1276,7355,2900,10498,2765,10755,2251,10693,2406,10846,2452,9994,2367,13518,694,9149,3144,10363,2626,10363,2631,7091,1839,11869,1294,10049,2742,9387,2710,8969,2120,10714,2074,13219,842,13223,840,11777,2134,10882,2122,9567,2710,10809,2986,10647,2956,10645,2961,11067,3032,13055,1917,7895,4035,11001,2178,9059,2495,9446,2616,12993,1029,9631,2536,9057,2540,11195,2467,6741,2420,8847,2529,8939,2276,10718,2112,9079,2354,10394,2583,12264,2527,10433,2720,10374,2555,10448,2715,10373,2812,10371,2806,10530,2644,10625,3002,10615,2999,10136,2273,10241,2420,10905,2131,11692,2125,11761,2127,11027,3003,11058,3019,10995,2997,10949,2922,10432,2555,10069,2371,10035,2313,11777,2131,10105,2402,11052,3346,11101,3338,11198,3472,10933,3705,10951,3690,11071,3884,10170,2379,10159,2391,10249,2362,12397,1092,11062,3885,10577,2703,10719,2096,10721,2097,10726,2090,9953,2283,11770,2117,9961,2412,9942,2427,10223,2427,12817,974,10935,2969,11161,2404,9929,2370,8901,2123,8928,2121,9537,2108,9627,2552,9830,2742,9607,2747,9385,2297,11155,2997,11170,3012,8715,1760,8848,1791,8820,1777,2938,2929,9257,2034,11028,3286,10651,2679,10607,2820,10358,2518,9876,2663,9457,2273,10301,2261,11438,1725,10633,2992,10384,2776,10577,3069,9860,2392,10658,2476,9387,2293,9371,2333,13598,1439,9261,1939,8860,1795,11628,2468,9844,2405,10446,2644,10566,2896,8267,1962,10352,2754,10401,2689,10226,2231,11809,1377,13597,1442,11066,3054,10899,1989,6737,2416,10611,3065,9573,2243,10560,3089,9193,1980,8959,2081,12329,1092,9000,2180,11630,2465,10190,2381,12565,1275,9283,2626,10590,2772,10444,2869,10246,2526,10054,2311,10498,2626,12229,2510,9418,2282,11735,1463,11581,1825,9405,2217,13752,1527,10752,3493,12470,1054,10014,2207,10191,2455,9143,2790,13768,1561,9963,3890,6521,1873,11363,3333,11956,1217,8592,1817,11369,3336,9922,2407,10503,2879,10003,2264,9922,3079,7396,2923,7367,2902,7402,2920,10881,2408,12774,1150,12964,1025,9351,2587,11456,1727,10111,2358,10364,2622,12986,1029,11082,2187,6953,2337,10692,2392,13225,836,10920,2457,10889,2120,10843,2762,9885,2993,8827,2701,10640,2966,9948,2293,7685,1912,7641,1922,10041,2225,10709,2090,10402,3008,9230,2613,13575,1475,10193,2445,10473,2850,9758,3051,11260,2104,9915,2849,8476,2247,10609,2457,9355,2994,11448,3494,11068,3054,10869,2141,9282,1948,10401,2588,10381,2690,10457,2753,10440,2691,10449,2734,10443,2667,10333,2731,10376,2834,10367,2799,10470,2837,10621,2880,10543,2628,10635,3010,11347,2448,10583,3063,13223,842,10217,2465,10240,2438,10253,2432,10904,2121,11673,2124,11070,3046,10927,2872,10079,2384,11071,3881,10128,2410,10149,2397,10163,2371,11234,1798,11258,1820,10262,2350,10258,2293,10236,2267,10242,2273,10596,2696,12855,989,10768,2706,10194,2253,10191,2255,10067,2271,11073,3351,11679,2124,10015,2361,9957,2387,9868,2229,9863,2244,9260,1985,9285,1986,9538,2134,9621,2568,9619,2543,12861,954,10384,2523,10009,2362,10005,2357,9356,2290,11159,3002,8731,1775,8723,1771,8712,1752,10428,2630,7683,2006,7671,2008,7642,1922,6773,2375,12859,970,12856,977,10170,2336,10247,2518,11529,1985,11545,1966,9896,2397,11198,2464,10067,2235,11035,2684,10458,3204,10890,1913,10829,2706,8884,1792,9859,2393,10169,2335,10810,3601,13114,1067,10878,2124,10505,2697,8369,1927,9543,2165,9904,2360,11627,2470,11175,1837,8629,1828,9193,2002,10812,3602,12402,1073,10036,2369,9877,2663,10175,2354,10741,3365,11416,3546,10891,2000,10892,1998,10897,1991,10716,2099,10615,2790,10000,2771,9999,2771,10581,3036,9200,1981,10109,2360,9334,3994,9344,3984,9401,3965,9561,2589,10031,2361,10168,2342,9945,3078,9944,3076,9947,3082,8994,2160,9299,2211,10841,2758,12427,1333,6723,2425,9604,2368,10389,4033,9229,2283,11661,1513,10014,2204,12789,975,12788,975,10718,2105,10351,2645,10444,2791,12109,2358,10004,2264,11683,2529,11693,2539,11696,2542,9686,2435,12227,2507,9411,2289,11625,2469,12838,1001,10142,2396,10261,2370,12212,1379,10285,2434,9943,2420,9141,2165,7387,2915,10441,2763,11081,2187,7412,2873,9372,2841,11106,2074,10029,2433,9833,2335,9532,2615,9588,2595,12870,955,8996,2125,9040,2643,10753,2355,10694,2392,10753,2536,11777,2133,8433,2285,11619,2521,9568,2711,11076,3270,7652,2012,11069,3043,12211,1379,8509,3274,11088,2183,10410,2658,9697,4168,10371,2737,9705,4170,13579,1470,8348,2558,11557,2461,12831,934,10002,2787,10137,2273,9567,2582,11651,2461,11411,2488,10087,2738,10928,2448,10864,1893],"x0":27.95,"y0":40.78};
+(function(){
+  const cv = document.getElementById('map');
+  const ctx = cv.getContext('2d');
+  const css = getComputedStyle(document.documentElement);
+  const W = cv.width, H = cv.height, pad = 18;
+  const minX = 28.42, maxX = 29.52, minY = 40.84, maxY = 41.24;
+  const sx = (W - 2*pad) / (maxX - minX), sy = (H - 2*pad) / (maxY - minY);
+  const s = Math.min(sx, sy * 1.0);
+  const ox = (W - (maxX-minX)*s)/2, oy = (H - (maxY-minY)*s*1.32)/2;
+  const proj = (x,y) => [ox + (x-minX)*s, oy + (maxY-y)*s*1.32];
+  function draw(){
+    const accent = css.getPropertyValue('--accent').trim();
+    const signal = css.getPropertyValue('--signal').trim();
+    const rule = css.getPropertyValue('--rule').trim();
+    ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle = rule; ctx.lineWidth = 1;
+    for(let gx=28.5; gx<=29.5; gx+=0.1){const [a]=proj(gx,0); ctx.beginPath(); ctx.moveTo(a,0); ctx.lineTo(a,H); ctx.stroke();}
+    for(let gy=40.85; gy<=41.25; gy+=0.05){const [,b]=proj(0,gy); ctx.beginPath(); ctx.moveTo(0,b); ctx.lineTo(W,b); ctx.stroke();}
+    const dot=(arr,color,r,alpha)=>{ctx.fillStyle=color; ctx.globalAlpha=alpha;
+      for(let i=0;i<arr.length;i+=2){const [x,y]=proj(PTS.x0+arr[i]/1e4, PTS.y0+arr[i+1]/1e4); ctx.beginPath(); ctx.arc(x,y,r,0,6.2832); ctx.fill();}
+      ctx.globalAlpha=1;};
+    dot(PTS.st, accent, 2.1, .55);
+    dot(PTS.ca, signal, 2.6, .9);
+    ctx.fillStyle = css.getPropertyValue('--muted').trim();
+    ctx.font = '500 13px JetBrains Mono, monospace';
+    const [kx,ky]=proj(28.44,41.225); ctx.fillText('41.2°N · 28.4°E', kx, ky);
+    // detector box over the dense European-side core
+    const [x1,y1]=proj(28.78,41.12), [x2,y2]=proj(29.06,40.97);
+    const box=document.getElementById('box'), r=cv.getBoundingClientRect(), k=r.width/W;
+    box.style.left=(14+x1*k)+'px'; box.style.top=(14+y1*k)+'px';
+    box.style.width=((x2-x1)*k)+'px'; box.style.height=((y2-y1)*k)+'px'; box.hidden=false;
+  }
+  draw();
+  addEventListener('resize', draw);
+  if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', draw);
+  new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  document.fonts && document.fonts.ready.then(draw);
+})();
+</script>
+</body>
+</html>
